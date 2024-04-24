@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;nucleoF411_base/STM32F4xx_HAL_Driver/inc/stm32f4xx_HAL_gpio_ex.h&apos; to &apos;stm32f4xx_hal_gpio_ex.h&apos;" description="Rename resource &apos;stm32f4xx_HAL_gpio_ex.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="STM32F4xx_HAL_Driver/inc/stm32f4xx_HAL_gpio_ex.h" name="stm32f4xx_hal_gpio_ex.h" stamp="1673596969774" updateReferences="true"/>
+</session>

@@ -1,0 +1,141 @@
+#ifndef _TIMER_H_
+#define _TIMER_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif 
+
+#include "include/board.h"
+
+typedef void (*OnTick)(void);
+
+
+
+typedef struct
+{
+  uint32_t Prescaler;         /*!< Specifies the prescaler value used to divide the TIM clock.
+                                   This parameter can be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF */
+
+  uint32_t CounterMode;       /*!< Specifies the counter mode.
+                                   This parameter can be a value of @ref TIM_Counter_Mode */
+
+  uint32_t Period;            /*!< Specifies the period value to be loaded into the active
+                                   Auto-Reload Register at the next update event.
+                                   This parameter can be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF.  */
+
+  uint32_t ClockDivision;     /*!< Specifies the clock division.
+                                   This parameter can be a value of @ref TIM_ClockDivision */
+
+  uint32_t RepetitionCounter;  /*!< Specifies the repetition counter value. Each time the RCR downcounter
+                                    reaches zero, an update event is generated and counting restarts
+                                    from the RCR value (N).
+                                    This means in PWM mode that (N+1) corresponds to:
+                                        - the number of PWM periods in edge-aligned mode
+                                        - the number of half PWM period in center-aligned mode
+                                     GP timers: this parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF.
+                                     Advanced timers: this parameter must be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  uint32_t AutoReloadPreload;  /*!< Specifies the auto-reload preload.
+                                   This parameter can be a value of @ref TIM_AutoReloadPreload */
+} TIM_Base_InitTypeDef;
+
+
+
+typedef enum
+{
+  HAL_TIM_STATE_RESET             = 0x00U,    /*!< Peripheral not yet initialized or disabled  */
+  HAL_TIM_STATE_READY             = 0x01U,    /*!< Peripheral Initialized and ready for use    */
+  HAL_TIM_STATE_BUSY              = 0x02U,    /*!< An internal process is ongoing              */
+  HAL_TIM_STATE_TIMEOUT           = 0x03U,    /*!< Timeout state                               */
+  HAL_TIM_STATE_ERROR             = 0x04U     /*!< Reception process is ongoing                */
+} HAL_TIM_StateTypeDef;
+
+/* Blocking mode: Polling */
+//HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim);
+//HAL_StatusTypeDef HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim);
+/* Non-Blocking mode: Interrupt */
+//HAL_StatusTypeDef HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim);
+//HAL_StatusTypeDef HAL_TIM_Base_Stop_IT(TIM_HandleTypeDef *htim);
+
+/***************************************************************************/
+/* timer_wait_ms
+ *   wait for ms millisecoonds function
+ */
+int HAL_TIM_wait_ms(TIM_TypeDef *htim, uint32_t ms);
+//int timer_wait_ms(TIM_t *tmr, uint32_t ms, OnTick cb);
+
+/* timer_wait_us
+ *   wait for us microsecoonds function
+ */
+//HAL_StatusTypeDef HAL_TIM_wait_us(TIM_HandleTypeDef *htim, uint32_t us)
+//int timer_wait_us(TIM_t *tmr, uint32_t us, OnTick cb);
+int HAL_TIM_wait_us(TIM_TypeDef *htim, uint32_t us);
+
+/***************************************************************************/
+/* timer_tick_init
+ *   setup timer to call cb function periodically, each tick_ms
+ *   FONCTIONNEMENT PERIODIQUE
+ */
+int HAL_TIM_Base_Init(TIM_TypeDef *htim,  uint32_t tick_ms);
+//int timer_tick_init(TIM_t *tmr, uint32_t tick_ms, OnTick cb);
+
+/* timer_start
+ *   start counting to generate ticks
+ */
+//HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim)
+void timer_start(TIM_t *tmr);
+
+/* timer_stop
+ *   stop and reset counting
+ */
+//HAL_StatusTypeDef HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim)
+void timer_stop(TIM_t *tmr);
+
+/***************************************************************************/
+#define PWM_CHANNEL_1		0
+#define PWM_CHANNEL_2		1
+#define PWM_CHANNEL_3		2
+#define PWM_CHANNEL_4		3
+
+/* pwm_init
+ *   setup pwm timer period, each tick_ms
+ */
+int pwm_init(PWM_t *pwm, uint32_t period_ms, OnTick cb);
+// HAL_StatusTypeDef HAL_TIM_PWM_Init(TIM_HandleTypeDef *htim);
+
+
+/* pwm_channel_enable
+ *   set up pwm channel
+ */
+int pwm_channel_enable(PWM_t *pwm, uint32_t channel, uint32_t dutycycle, uint32_t oe);
+
+/* pwm_channel_disable
+ *   disable pwm channel
+ */
+int pwm_channel_disable(PWM_t *pwm, uint32_t channel);
+
+/* pwm_channel_set
+ *   set up dutycycle for pwm channel
+ */
+int pwm_channel_set(PWM_t *pwm, uint32_t channel, uint32_t dutycycle);
+
+/* pwm_start
+ *   start counting
+ */
+#define pwm_start(pwm)	timer_start(pwm)
+// HAL_StatusTypeDef HAL_TIM_PWM_Start(TIM_HandleTypeDef *htim, uint32_t Channel);
+// HAL_StatusTypeDef HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel);
+
+// HAL_StatusTypeDef HAL_TIM_PWM_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel);
+// HAL_StatusTypeDef HAL_TIM_PWM_Stop_IT(TIM_HandleTypeDef *htim, uint32_t Channel);
+
+
+/* pwm_stop
+ *   stop and reset counting
+ */
+#define pwm_stop(pwm)	timer_stop(pwm)
+
+#ifdef __cplusplus
+}
+#endif
+#endif

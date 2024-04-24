@@ -1,0 +1,23 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "./"
+  },
+  "author": "Jane doe",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^29.3.0"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "serialport": "^12.0.0"
+  }
+}

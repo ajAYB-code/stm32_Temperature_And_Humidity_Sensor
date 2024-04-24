@@ -1,0 +1,10 @@
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Config_Debug
+eclipse.preferences.version=1
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Config_Debug/activeLaunchMode=debug
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Config_Debug/activeLaunchTarget=null\:---
+org.eclipse.launchbar.core.descriptorType.default\:New_configuration/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:New_configuration/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:nucleoF411_base\ Debug/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local

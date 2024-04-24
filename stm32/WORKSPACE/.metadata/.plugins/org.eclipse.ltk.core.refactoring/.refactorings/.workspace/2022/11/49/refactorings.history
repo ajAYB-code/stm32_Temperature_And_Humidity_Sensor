@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;nucleoF411_base/lib/libstm32.a&apos;" deleteContents="false" description="Delete resource &apos;nucleoF411_base/lib/libstm32.a&apos;" element1="/nucleoF411_base/lib/libstm32.a" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1669570806546"/>
+</session>
