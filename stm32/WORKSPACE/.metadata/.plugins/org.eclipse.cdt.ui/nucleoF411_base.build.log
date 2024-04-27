@@ -1,6 +1,6 @@
-18:06:10 **** Incremental Build of configuration Debug for project nucleoF411_base ****
+00:11:29 **** Incremental Build of configuration Debug for project nucleoF411_base ****
 make -j4 all 
 make: Nothing to be done for 'all'.
 
-18:06:10 Build Finished. 0 errors, 0 warnings. (took 365ms)
+00:11:30 Build Finished. 0 errors, 0 warnings. (took 738ms)
 
