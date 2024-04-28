@@ -55,10 +55,8 @@ app.whenReady().then(() => {
         receivedData += data.toString(); 
         if (receivedData.includes('\n')) {
           [temp, humd] = receivedData.split('-');
-          console.log("temp string = " +temp)
           temp = parseInt(temp);
           humd = parseInt(humd);
-          console.log(temp);
           if(!isNaN(temp) && !isNaN(humd)){
             con.query(`INSERT INTO weather(temperture,humidity) VALUES (${temp},${humd})`, function (error, results) {
               if (error) throw error;
