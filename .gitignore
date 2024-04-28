@@ -7,7 +7,6 @@
 /stm32/WORKSPACE/nucleoF411_base/*.nfs*
 /stm32/WORKSPACE/nucleoF411_base/*.dbginit
 /stm32/WORKSPACE/nucleoF411_base/.dep/
-/stm32/WORKSPACE/nucleoF411_base/.settings/
 
 # ElectronJS
 /app/node_modules/
