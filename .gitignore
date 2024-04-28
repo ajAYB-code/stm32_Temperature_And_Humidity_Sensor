@@ -1,13 +1,13 @@
 # STM32 Project
-/stm32/nucleoF411_base/*.o
-/stm32/nucleoF411_base/*.bin
-/stm32/nucleoF411_base/*.elf*
-/stm32/nucleoF411_base/*.cproject
-/stm32/nucleoF411_base/*.Project
-/stm32/nucleoF411_base/*.hex
-/stm32/nucleoF411_base/*.nfs*
-/stm32/nucleoF411_base/*.dbginit
-/stm32/nucleoF411_base/.dep/
+/stm32/WORKSPACE/nucleoF411_base/*.o
+/stm32/WORKSPACE/nucleoF411_base/*.bin
+/stm32/WORKSPACE/nucleoF411_base/*.elf*
+/stm32/WORKSPACE/nucleoF411_base/*.cproject
+/stm32/WORKSPACE/nucleoF411_base/*.Project
+/stm32/WORKSPACE/nucleoF411_base/*.hex
+/stm32/WORKSPACE/nucleoF411_base/*.nfs*
+/stm32/WORKSPACE/nucleoF411_base/*.dbginit
+/stm32/WORKSPACE/nucleoF411_base/.dep/
 
 # ElectronJS
 /app/node_modules/
