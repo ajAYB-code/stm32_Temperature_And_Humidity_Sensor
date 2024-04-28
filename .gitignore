@@ -3,6 +3,7 @@
 /stm32/WORKSPACE/nucleoF411_base/*.o
 /stm32/WORKSPACE/nucleoF411_base/mbed_shield/src/*.o
 /stm32/WORKSPACE/nucleoF411_base/mbed_shield/src/*.o
+/stm32/WORKSPACE/nucleoF411_base/STM32F4xx_HAL_Driver/src/*.o
 /stm32/WORKSPACE/nucleoF411_base/startup/*.o
 /stm32/WORKSPACE/nucleoF411_base/src/*.o
 /stm32/WORKSPACE/nucleoF411_base/*.bin
