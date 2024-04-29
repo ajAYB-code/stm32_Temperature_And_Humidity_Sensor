@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `weather`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `weather` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `temperture` int NOT NULL,
+  `temperature` int NOT NULL,
   `humidity` int NOT NULL,
   PRIMARY KEY (`timestamp`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

@@ -58,7 +58,7 @@ app.whenReady().then(() => {
           temp = parseInt(temp);
           humd = parseInt(humd);
           if(!isNaN(temp) && !isNaN(humd)){
-            con.query(`INSERT INTO weather(temperture,humidity) VALUES (${temp},${humd})`, function (error, results) {
+            con.query(`INSERT INTO weather(temperature,humidity) VALUES (${temp},${humd})`, function (error, results) {
               if (error) throw error;
             });
   
