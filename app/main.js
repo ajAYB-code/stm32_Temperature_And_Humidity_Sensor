@@ -30,7 +30,7 @@ app.whenReady().then(() => {
     createMainWindow()
 
     // Init serial port
-    const port = new SerialPort({
+    /*const port = new SerialPort({
       path : 'COM3', 
       baudRate: 115200 
     });
@@ -72,7 +72,7 @@ app.whenReady().then(() => {
         console.error('Error:', err.message);
       });
 
-    })
+    })*/
     
   })
  

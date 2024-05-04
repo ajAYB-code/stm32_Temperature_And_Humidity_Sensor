@@ -3,13 +3,60 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <link rel="stylesheet" href="style.css">
-    <title>Hello World!</title>
+    <title>Température & Humidité</title>
   </head>
   <body>
-    <h1 id="temp"></h1>
-    <h1 id="humd"></h1>
+    <div class="container">
+      <div class="row">
+        <div class="col left">
+          <div class="container">
+            <svg
+              width="150" height="150" viewBox="0 0 150 150"
+              class="circular-progress temperature"
+            >
+            <defs>
+              <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#0084ff;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
+              </linearGradient>
+              <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00ff15;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#33ff00;stop-opacity:1" />
+              </linearGradient>
+              <linearGradient id="yellow" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ffae00;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#ffee00;stop-opacity:1" />
+              </linearGradient>
+              <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#ff6600;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          
+              <circle class="bg"></circle>
+              <circle class="fg"></circle>
+            </svg>
+            <div class="percent-text">
+              <p>
+                <span class="number">39</span> <span class="unit">°</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col right"></div>
+      </div>
+      <div class="row">
+        <div class="col left">
+          <div id="humidityCircle" class="circle">
+            <div class="circleText" id="humidityText">Humidity: </div>
+            <div class="progressBar" id="humidityProgressBar"></div>
+          </div>
+        </div>
+        <div class="col right"></div>
+      </div>
+    </div>
     <script src="renderer.js"></script>
   </body>
 </html>
