@@ -1,6 +1,74 @@
-h1#temp{
-    color: red;
-};
-h1#humd{
-    color: blue;
-};
+body{
+    
+}
+body  > .container{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.container .row{
+    height: 50%;
+    display: flex;
+}
+.container .row .col.left {
+    width: 30%;
+}
+.container .row .col.right {
+    flex: 1;
+}
+.container .row .col{
+    border: 2px solid black;
+    display: grid;
+    place-items: center;
+}
+.container .row .col .container{
+  position: relative;
+}
+  
+.circular-progress {
+    --progress: 0;
+    --size: 150px;
+    --half-size: calc(var(--size) / 2);
+    --stroke-width: 15px;
+    --radius: calc((var(--size) - var(--stroke-width)) / 2);
+    --circumference: calc(var(--radius) * 3.14 * 2);
+    --dash: calc((var(--progress) * var(--circumference)) / 100);
+  }
+
+.circular-progress + .percent-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+  }
+.circular-progress + .percent-text p {
+    display: flex;
+  }
+.circular-progress + .percent-text .number {
+    font-size: 40px;
+  }
+.circular-progress + .percent-text .unit {
+    font-size: 30px;
+  }
+  
+  .circular-progress circle {
+    cx: var(--half-size);
+    cy: var(--half-size);
+    r: var(--radius);
+    stroke-width: var(--stroke-width);
+    fill: none;
+    stroke-linecap: round;
+  }
+  
+  .circular-progress circle.bg {
+    stroke: #ddd;
+  }
+  
+  .circular-progress circle.fg {
+    transform: rotate(-90deg);
+    transform-origin: var(--half-size) var(--half-size);
+    stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
+    transition: stroke-dasharray 0.7s linear 0s,
+                stroke .6s;
+    stroke: url(#blue);
+  }
