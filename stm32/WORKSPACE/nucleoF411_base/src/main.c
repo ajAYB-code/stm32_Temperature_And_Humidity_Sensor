@@ -120,7 +120,7 @@ int main()
 		uart_printf(&huart2, "%f-%f\r\n", temp, humd);
 
 
-		HAL_Delay(1000);
+		HAL_Delay(10000);
 
 		/*lm75_read_temp(&temp);
 		HAL_Delay(1000);

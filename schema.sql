@@ -24,8 +24,8 @@ DROP TABLE IF EXISTS `weather`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `weather` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `temperature` int NOT NULL,
-  `humidity` int NOT NULL,
+  `temperature` decimal(10,1) NOT NULL,
+  `humidity` decimal(10,1) NOT NULL,
   PRIMARY KEY (`timestamp`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -39,4 +39,4 @@ CREATE TABLE `weather` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-28 16:58:59
+-- Dump completed on 2024-04-29 21:05:43

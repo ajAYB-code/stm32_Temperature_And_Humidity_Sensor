@@ -30,9 +30,9 @@ app.whenReady().then(() => {
     createMainWindow()
 
     // Init serial port
-    /*const port = new SerialPort({
+    const port = new SerialPort({
       path : 'COM3', 
-      baudRate: 115200 
+      baudRate: 115200
     });
 
     // Init database connection
@@ -55,14 +55,16 @@ app.whenReady().then(() => {
         receivedData += data.toString(); 
         if (receivedData.includes('\n')) {
           [temp, humd] = receivedData.split('-');
-          temp = parseInt(temp);
+          temp = parseFloat(temp).toFixed(1);
           humd = parseInt(humd);
-          if(!isNaN(temp) && !isNaN(humd)){
+          const isValidTempratureValue = temp >= -40 && temp <= 125;
+          const isValidHumidityValue = humd >= 0 && humd <= 100;
+          if(!isNaN(temp) && !isNaN(humd) && isValidHumidityValue && isValidTempratureValue){
             con.query(`INSERT INTO weather(temperature,humidity) VALUES (${temp},${humd})`, function (error, results) {
-              if (error) throw error;
+              if (error) console.log(error);
             });
   
-            mainWindow.webContents.send('sensor-data', {temp: temp, humid: humd});
+            mainWindow.webContents.send('current-sensor-data', {temp: temp, humid: humd});
           }
           receivedData = '';
         }
@@ -72,7 +74,18 @@ app.whenReady().then(() => {
         console.error('Error:', err.message);
       });
 
-    })*/
+      // Listen to fetch data
+      ipcMain.on('fetch-sensor-data', (event, data) => {
+        let sql = `SELECT timestamp,${data.column} FROM weather`;
+        con.query(sql, function (error, results) {
+          if (error) console.log(error);
+          console.log(results)
+          mainWindow.webContents.send('fetched-sensor-data', {list: results, column: data.column});
+        });
+        
+      })
+
+    })
     
   })
  
