@@ -20,3 +20,6 @@
 
 # ElectronJS
 /app/node_modules/
+
+# Database
+/sensor_database
