@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron')
 const path = require('node:path')
 const SerialPort = require('serialport').SerialPort;
-var mysql = require('mysql');
+const sqlite3 = require('sqlite3').verbose();
 
 let mainWindow;
 
@@ -24,8 +24,6 @@ const createMainWindow = () => {
   }
 
 
-// Receive data from sensor using serial port
-
 app.whenReady().then(() => {
     createMainWindow()
 
@@ -35,19 +33,18 @@ app.whenReady().then(() => {
       baudRate: 115200
     });
 
-    // Init database connection
-    const con = mysql.createConnection({
-      host: "localhost",
-      user: "root",
-      password: "",
-      database: "project_stm32"
+    // Init database
+    const db = new sqlite3.Database('../sensor_database.db', function(err){
+      if(err){
+        console.log('error opening database');
+        process.exit(1);
+      }
+      
     });
 
     mainWindow.webContents.on("did-finish-load", () => {
 
-      con.connect();
-
-      // read sensor data
+      // // read sensor data
       let receivedData = ''; 
       let temp, humd;
 
@@ -60,8 +57,12 @@ app.whenReady().then(() => {
           const isValidTempratureValue = temp >= -40 && temp <= 125;
           const isValidHumidityValue = humd >= 0 && humd <= 100;
           if(!isNaN(temp) && !isNaN(humd) && isValidHumidityValue && isValidTempratureValue){
-            con.query(`INSERT INTO weather(temperature,humidity) VALUES (${temp},${humd})`, function (error, results) {
-              if (error) console.log(error);
+            db.serialize(() => {
+              db.run('INSERT INTO sensor_data  VALUES (?, ?, ?)', [new Date().toISOString().replace('T', ' ').slice(0, 19), 30.9, 40.5], function(err){
+                if(err){
+                  return console.log(err.message)
+                }
+              });
             });
   
             mainWindow.webContents.send('current-sensor-data', {temp: temp, humid: humd});
@@ -76,16 +77,86 @@ app.whenReady().then(() => {
 
       // Listen to fetch data
       ipcMain.on('fetch-sensor-data', (event, data) => {
-        let sql = `SELECT timestamp,${data.column} FROM weather`;
-        con.query(sql, function (error, results) {
-          if (error) console.log(error);
-          console.log(results)
-          mainWindow.webContents.send('fetched-sensor-data', {list: results, column: data.column});
+
+        // Fetch data for different time interval
+        let sql = ''
+
+        switch(data.timeInterval){
+
+        // Last 24 hours
+         case '24 hours':
+            sql += `SELECT 
+                      strftime('%H', timestamp) AS hour,
+                      AVG(${data.column})
+                      FROM 
+                      weather_data
+                      WHERE 
+                      timestamp >= datetime('now', '-24 hours')
+                      GROUP BY hour;`; break;
+
+          // Last week
+          case 'last week':
+            sql += `SELECT 
+                      CASE strftime('%w', timestamp)
+                        WHEN '0' THEN 'Dimanche'
+                        WHEN '1' THEN 'Lundi'
+                        WHEN '2' THEN 'Mardi'
+                        WHEN '3' THEN 'Mercredi'
+                        WHEN '4' THEN 'Jeudi'
+                        WHEN '5' THEN 'Vendredi'
+                        WHEN '6' THEN 'Samedi'
+                      END AS week,
+                      AVG(${data.column})
+                      FROM 
+                      weather_data
+                      WHERE 
+                      timestamp >= datetime('now', '-7 days')
+                      GROUP BY week;`; break;
+        
+        // Last month
+        case 'last month':
+            sql += `SELECT 
+                      strftime('%d', timestamp) as month,
+                      AVG(${data.column})
+                      FROM 
+                      weather_data
+                      WHERE 
+                      timestamp >= datetime('now', '-30 days')
+                      GROUP BY month;`; break;
+
+        // Defined time interval
+        case 'custom':
+            sql += `SELECT 
+                      strftime('%Y-%m-%d', timestamp) as custom,
+                      AVG(${data.column})
+                      FROM 
+                      weather_data
+                      WHERE 
+                      timestamp BETWEEN ${data.minTime} AND ${data.maxTime}
+                      GROUP BY custom;`; break;
+        
+        }
+
+        db.all(sql, [], (err, rows) => {
+          if (err) {
+              console.error(err.message);
+              return;
+          }
+
+          // Process the retrieved rows
+          console.log(rows)
+          mainWindow.webContents.send('fetched-sensor-data', {list: rows, column: data.column});
         });
         
       })
 
     })
+
+    // Close Database and Serial connection
+    app.on('before-quit', () => {
+      db.close();
+      port.close()
+    });
     
   })
  
