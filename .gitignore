@@ -22,4 +22,4 @@
 /app/node_modules/
 
 # Database
-/sensor_database
+/sensor_database.db
