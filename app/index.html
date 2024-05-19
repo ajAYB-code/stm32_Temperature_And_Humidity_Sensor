@@ -3,15 +3,26 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
     <script src="./node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <title>Température & Humidité</title>
   </head>
   <body>
-    <div class="container">
-      <div class="row">
+    <div class="tab-header">
+      <a href="#" class="tab-link active"><i class="fas fa-thermometer-half"></i> Temperature</a>
+      <a href="#" class="tab-link"><i class="fas fa-tint"></i> Humidité</a>
+      <a href="#" class="tab-link"><i class="fas fa-bell"></i> Alarms</a>
+      <a href="#" class="tab-link"><i class="fas fa-cog"></i> Parametres</a>
+  </div>
+
+    <!-- Measure tab -->
+    <div class="container tab measure">
+
+      <!-- Temperature -->
+      <div class="row temperature">
         <div class="col left">
           <h3 class="col-title">Température</h3>
           <div class="container">
@@ -49,14 +60,36 @@
           </div>
         </div>
         <div class="col right">
+          <select name="" id="temperatureDateSelect" data-measure="temperature" class="date-select">
+            <option value="24 hours">Dernières 24 heures</option>
+            <option value="last week">Dernière semaine</option>
+            <option value="last month">Dernier mois</option>
+            <option value="custom">Definir le temps</option>
+          </select>
+          <div id="tempCustomDateDialog" data-measure="temperature" class="custom-date-dialog">
+            <form id="dateRangeForm">
+              <div class="row">
+                <label for="fromDate">De:</label>
+                <input type="date" id="fromDate" name="fromDate" required>
+              </div>
+              <div class="row">
+                <label for="toDate">A:</label>
+                <input type="date" id="toDate" name="toDate" required>
+              </div>
+              <button type="submit" class="submit-btn">Envoyer</button>
+              <button type="button" class="close-dialog">Fermer</button>
+            </form>
+          </div>
           <canvas id="temperatureChart" width="100%" height="100%"></canvas>
         </div>
       </div>
-      <div class="row">
+
+      <!-- Humidté -->
+      <div class="row humidity">
         <div class="col left">
           <h3 class="col-title">Humidité</h3>
           <div class="container">
-              <svg
+            <svg
               width="150" height="150" viewBox="0 0 150 150"
               class="circular-progress humidity"
             >
@@ -64,6 +97,10 @@
               <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:#0084ff;stop-opacity:1" />
                 <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
+              </linearGradient>
+              <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00ff15;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#33ff00;stop-opacity:1" />
               </linearGradient>
               <linearGradient id="yellow" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:#ffae00;stop-opacity:1" />
@@ -85,7 +122,29 @@
             </div>
           </div>
         </div>
-        <div class="col right"></div>
+        <div class="col right">
+          <select name="" data-measure="humidity" id="humidityDateSelect" class="date-select">
+            <option value="24 hours">Dernières 24 heures</option>
+            <option value="last week">Dernière semaine</option>
+            <option value="last month">Dernier mois</option>
+            <option value="custom">Definir le temps</option>
+          </select>
+          <div id="humdCustomDateDialog" data-measure="humidity" class="custom-date-dialog">
+            <form id="dateRangeForm">
+              <div class="row">
+                <label for="fromDate">De:</label>
+                <input type="date" id="fromDate" name="fromDate" required>
+              </div>
+              <div class="row">
+                <label for="toDate">A:</label>
+                <input type="date" id="toDate" name="toDate" required>
+              </div>
+              <button type="submit" class="submit-btn">Envoyer</button>
+              <button type="button" class="close-dialog">Fermer</button>
+            </form>
+          </div>
+          <canvas id="humidityChart" width="100%" height="100%"></canvas>
+        </div>
       </div>
     </div>
     <script type="module" src="renderer.js"></script>

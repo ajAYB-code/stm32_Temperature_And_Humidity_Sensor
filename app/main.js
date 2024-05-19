@@ -44,7 +44,7 @@ app.whenReady().then(() => {
 
     mainWindow.webContents.on("did-finish-load", () => {
 
-      // // read sensor data
+      // read sensor data
       let receivedData = ''; 
       let temp, humd;
 
@@ -58,7 +58,7 @@ app.whenReady().then(() => {
           const isValidHumidityValue = humd >= 0 && humd <= 100;
           if(!isNaN(temp) && !isNaN(humd) && isValidHumidityValue && isValidTempratureValue){
             db.serialize(() => {
-              db.run('INSERT INTO sensor_data  VALUES (?, ?, ?)', [new Date().toISOString().replace('T', ' ').slice(0, 19), 30.9, 40.5], function(err){
+              db.run('INSERT INTO sensor_data  VALUES (?, ?, ?)', [new Date().toISOString().replace('T', ' ').slice(0, 19), temp, humd], function(err){
                 if(err){
                   return console.log(err.message)
                 }
@@ -86,13 +86,13 @@ app.whenReady().then(() => {
         // Last 24 hours
          case '24 hours':
             sql += `SELECT 
-                      strftime('%H', timestamp) AS hour,
-                      AVG(${data.column})
+                      strftime('%H', timestamp) AS time,
+                      AVG(${data.column}) as ${data.column}
                       FROM 
-                      weather_data
+                      sensor_data
                       WHERE 
                       timestamp >= datetime('now', '-24 hours')
-                      GROUP BY hour;`; break;
+                      GROUP BY time;`; break;
 
           // Last week
           case 'last week':
@@ -105,36 +105,35 @@ app.whenReady().then(() => {
                         WHEN '4' THEN 'Jeudi'
                         WHEN '5' THEN 'Vendredi'
                         WHEN '6' THEN 'Samedi'
-                      END AS week,
-                      AVG(${data.column})
-                      FROM 
-                      weather_data
+                      END AS time,
+                      AVG(${data.column}) as ${data.column}
+                      FROM
+                      sensor_data
                       WHERE 
                       timestamp >= datetime('now', '-7 days')
-                      GROUP BY week;`; break;
+                      GROUP BY time;`; break;
         
         // Last month
         case 'last month':
             sql += `SELECT 
-                      strftime('%d', timestamp) as month,
-                      AVG(${data.column})
+                      strftime('%d', timestamp) as time,
+                      AVG(${data.column}) as ${data.column}
                       FROM 
-                      weather_data
+                      sensor_data
                       WHERE 
                       timestamp >= datetime('now', '-30 days')
-                      GROUP BY month;`; break;
+                      GROUP BY time;`; break;
 
         // Defined time interval
         case 'custom':
             sql += `SELECT 
-                      strftime('%Y-%m-%d', timestamp) as custom,
-                      AVG(${data.column})
+                      strftime('%Y-%m-%d', timestamp) as time,
+                      AVG(${data.column}) as ${data.column}
                       FROM 
-                      weather_data
+                      sensor_data
                       WHERE 
-                      timestamp BETWEEN ${data.minTime} AND ${data.maxTime}
-                      GROUP BY custom;`; break;
-        
+                      time >= '${data.minTime}' AND time <= '${data.maxTime}'
+                      GROUP BY time;`;console.log(data.maxTime); break;
         }
 
         db.all(sql, [], (err, rows) => {
@@ -144,7 +143,6 @@ app.whenReady().then(() => {
           }
 
           // Process the retrieved rows
-          console.log(rows)
           mainWindow.webContents.send('fetched-sensor-data', {list: rows, column: data.column});
         });
         

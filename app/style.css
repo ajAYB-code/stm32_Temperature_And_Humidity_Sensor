@@ -1,34 +1,107 @@
-body{
-    
+body {
+  font-family: Arial, sans-serif;
+  padding: 10px 12px;
+  background-color:rgb(245, 245, 245);
 }
 body  > .container{
-    height: 100vh;
+    height: 80vh;
+}
+body  > .container.measure{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 }
-.container .row{
-    height: 50%;
-    display: flex;
+/* Header */
+.tab-header {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 23px;
 }
-.container .row .col.left {
-    width: 30%;
-    display: grid;
-    place-items: center;
-    grid-template-rows: 100px 140px;
-}
-.container .row .col.right {
-    flex: 1;
-}
-.container .row .col{
-    border: 2px solid black;
-}
-.container .row .col .col-title{
-  margin: 0;
-}
-.container .row .col .container{
+.tab-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #555;
+  transition: color 0.3s, border-bottom 0.3s;
   position: relative;
 }
-  
+
+.tab-link i {
+  margin-right: 8px;
+}
+
+.tab-link.active {
+  color: #ff6f61;
+  border-bottom: 3px solid #ff6f61;
+}
+
+.tab-link:hover {
+  color: #ff6f61;
+}
+.container.measure .row{
+    height: 48%;
+}
+.container.measure .col{
+  border-radius: 20px;
+  background-color: white;
+}
+.container.measure.measure .row{
+    display: flex;
+    justify-content: space-between;
+}
+.container.measure .row .col.left {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.container.measure .row .col.left .col-title {
+  margin: 0;
+  transform: translateY(-11px);
+  font-size: 18px;
+}
+.container.measure .row .col.right {
+    width: 68%;
+    position: relative;
+}
+.container.measure .row .col.right .date-select{
+    position: absolute;
+    top: 7px;
+    right: 12px;
+}
+.custom-date-dialog {
+  display: none;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.custom-date-dialog .row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.custom-date-dialog .submit-btn, .close-dialog {
+  background-color: none;
+  border: none;
+  padding: 8px 12px;
+}
+.custom-date-dialog .submit-btn{
+  background-color: #ff6f61;
+  color: white;
+}
+.custom-date-dialog .close-dialog{
+  color: #ff6f61;
+  border: 1px solid #ff6f61;
+}
+.container.measure .row .col .container{
+  position: relative;
+}
 .circular-progress {
     --progress: 0;
     --size: 150px;
