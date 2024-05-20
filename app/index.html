@@ -8,145 +8,217 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
     <script src="./node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="./node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <title>Température & Humidité</title>
   </head>
   <body>
     <div class="tab-header">
-      <a href="#" class="tab-link active"><i class="fas fa-thermometer-half"></i> Temperature</a>
-      <a href="#" class="tab-link"><i class="fas fa-tint"></i> Humidité</a>
-      <a href="#" class="tab-link"><i class="fas fa-bell"></i> Alarms</a>
-      <a href="#" class="tab-link"><i class="fas fa-cog"></i> Parametres</a>
+      <a href="#" data-tab="dash" class="tab-link active"><i class="fas fa-thermometer-half"></i> Dash</a>
+      <a href="#" data-tab="alarms" class="tab-link"><i class="fas fa-bell"></i> Alertes</a>
+      <a href="#" data-tab="settings" class="tab-link"><i class="fas fa-cog"></i> Parametres</a>
   </div>
 
     <!-- Measure tab -->
-    <div class="container tab measure">
+    <div class="tab dash show">
+      <div class="container">
 
-      <!-- Temperature -->
-      <div class="row temperature">
-        <div class="col left">
-          <h3 class="col-title">Température</h3>
-          <div class="container">
-            <svg
-              width="150" height="150" viewBox="0 0 150 150"
-              class="circular-progress temperature"
-            >
-            <defs>
-              <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#0084ff;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#00ff15;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#33ff00;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="yellow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#ffae00;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#ffee00;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#ff6600;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-          
-              <circle class="bg"></circle>
-              <circle class="fg"></circle>
-            </svg>
-            <div class="percent-text">
-              <p>
-                <span class="number">0</span> <span class="unit">°</span>
-              </p>
+        <!-- Temperature -->
+        <div class="row temperature">
+          <div class="col left">
+            <h3 class="col-title">Température</h3>
+            <div class="container">
+              <svg
+                width="150" height="150" viewBox="0 0 150 150"
+                class="circular-progress temperature"
+              >
+              <defs>
+                <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#0084ff;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00ff15;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#33ff00;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="yellow" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#ffae00;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ffee00;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ff6600;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            
+                <circle class="bg"></circle>
+                <circle class="fg"></circle>
+              </svg>
+              <div class="percent-text">
+                <p>
+                  <span class="number">0</span> <span class="unit">°</span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col right">
-          <select name="" id="temperatureDateSelect" data-measure="temperature" class="date-select">
-            <option value="24 hours">Dernières 24 heures</option>
-            <option value="last week">Dernière semaine</option>
-            <option value="last month">Dernier mois</option>
-            <option value="custom">Definir le temps</option>
-          </select>
-          <div id="tempCustomDateDialog" data-measure="temperature" class="custom-date-dialog">
-            <form id="dateRangeForm">
-              <div class="row">
-                <label for="fromDate">De:</label>
-                <input type="date" id="fromDate" name="fromDate" required>
-              </div>
-              <div class="row">
-                <label for="toDate">A:</label>
-                <input type="date" id="toDate" name="toDate" required>
-              </div>
-              <button type="submit" class="submit-btn">Envoyer</button>
-              <button type="button" class="close-dialog">Fermer</button>
-            </form>
+          <div class="col right">
+            <select name="" id="temperatureDateSelect" data-measure="temperature" class="date-select">
+              <option value="24 hours">Dernières 24 heures</option>
+              <option value="last week">Dernière semaine</option>
+              <option value="last month">Dernier mois</option>
+              <option value="custom">Definir le temps</option>
+            </select>
+            <div id="tempCustomDateDialog" data-measure="temperature" class="custom-date-dialog">
+              <form id="dateRangeForm">
+                <div class="row">
+                  <label for="fromDate">De:</label>
+                  <input type="date" id="fromDate" name="fromDate" required>
+                </div>
+                <div class="row">
+                  <label for="toDate">A:</label>
+                  <input type="date" id="toDate" name="toDate" required>
+                </div>
+                <button type="submit" class="submit-btn">Envoyer</button>
+                <button type="button" class="close-dialog">Fermer</button>
+              </form>
+            </div>
+            <canvas id="temperatureChart" width="100%" height="100%"></canvas>
           </div>
-          <canvas id="temperatureChart" width="100%" height="100%"></canvas>
         </div>
-      </div>
-
-      <!-- Humidté -->
-      <div class="row humidity">
-        <div class="col left">
-          <h3 class="col-title">Humidité</h3>
-          <div class="container">
-            <svg
-              width="150" height="150" viewBox="0 0 150 150"
-              class="circular-progress humidity"
-            >
-            <defs>
-              <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#0084ff;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#00ff15;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#33ff00;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="yellow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#ffae00;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#ffee00;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#ff6600;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-          
-              <circle class="bg"></circle>
-              <circle class="fg"></circle>
-            </svg>
-            <div class="percent-text">
-              <p>
-                <span class="number">0</span> <span class="unit">%</span>
-              </p>
+  
+        <!-- Humidté -->
+        <div class="row humidity">
+          <div class="col left">
+            <h3 class="col-title">Humidité</h3>
+            <div class="container">
+              <svg
+                width="150" height="150" viewBox="0 0 150 150"
+                class="circular-progress humidity"
+              >
+              <defs>
+                <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#0084ff;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00ff15;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#33ff00;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="yellow" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#ffae00;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ffee00;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ff6600;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            
+                <circle class="bg"></circle>
+                <circle class="fg"></circle>
+              </svg>
+              <div class="percent-text">
+                <p>
+                  <span class="number">0</span> <span class="unit">%</span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col right">
-          <select name="" data-measure="humidity" id="humidityDateSelect" class="date-select">
-            <option value="24 hours">Dernières 24 heures</option>
-            <option value="last week">Dernière semaine</option>
-            <option value="last month">Dernier mois</option>
-            <option value="custom">Definir le temps</option>
-          </select>
-          <div id="humdCustomDateDialog" data-measure="humidity" class="custom-date-dialog">
-            <form id="dateRangeForm">
-              <div class="row">
-                <label for="fromDate">De:</label>
-                <input type="date" id="fromDate" name="fromDate" required>
-              </div>
-              <div class="row">
-                <label for="toDate">A:</label>
-                <input type="date" id="toDate" name="toDate" required>
-              </div>
-              <button type="submit" class="submit-btn">Envoyer</button>
-              <button type="button" class="close-dialog">Fermer</button>
-            </form>
+          <div class="col right">
+            <select name="" data-measure="humidity" id="humidityDateSelect" class="date-select">
+              <option value="24 hours">Dernières 24 heures</option>
+              <option value="last week">Dernière semaine</option>
+              <option value="last month">Dernier mois</option>
+              <option value="custom">Definir le temps</option>
+            </select>
+            <div id="humdCustomDateDialog" data-measure="humidity" class="custom-date-dialog">
+              <form id="dateRangeForm">
+                <div class="row">
+                  <label for="fromDate">De:</label>
+                  <input type="date" id="fromDate" name="fromDate" required>
+                </div>
+                <div class="row">
+                  <label for="toDate">A:</label>
+                  <input type="date" id="toDate" name="toDate" required>
+                </div>
+                <button type="submit" class="submit-btn">Envoyer</button>
+                <button type="button" class="close-dialog">Fermer</button>
+              </form>
+            </div>
+            <canvas id="humidityChart" width="100%" height="100%"></canvas>
           </div>
-          <canvas id="humidityChart" width="100%" height="100%"></canvas>
         </div>
       </div>
     </div>
+
+    <!-- Alarms tab -->
+    <div class="tab alarms">
+      <div class="container">
+        <div class="">
+          <button class="create-alarm-btn">Créer une alerte</button>
+          <p>Créez des alertes pour surveiller la température et l'humidité et éviter les excès.</p>
+        </div>
+        <div class="alarm-form-container">
+          <form action="">
+            <p class="form-error">Erreur dans la formulaire</p>
+            <div class="row name">
+              <label for="">Nom: </label>
+              <input type="text" name="name" id="">
+            </div>
+            <div class="row measure">
+              <label for="">Mesure: </label>
+              <select name="measureType" id="">
+                <option value="temperature">Température</option>
+                <option value="humidity">Humidté</option>
+              </select>
+            </div>
+            <div class="row interval">
+              <label for="" style="margin-right: 10px;">Valeur: </label>
+              <label for="">min</label>
+              <input type="radio" name="valueType" value="min" id="">
+              <label for="">max</label>
+              <input type="radio" name="valueType" value="max" id="">
+            </div>
+            <div class="row threshold">
+              <div class="row">
+                <label for="">Min: </label>
+                <input type="number" name="min-value" id="">
+              </div>
+              <div class="row">
+                <label for="">Max: </label>
+                <input type="number" name="max-value" id="">
+              </div>
+            </div>
+            <div class="row ring">
+              <label for="" style="margin-right: 10px;">Avec sonnerie: </label>
+              <label for="">Oui</label>
+              <input type="radio" name="ring" value="1" id="">
+              <label for="">Non</label>
+              <input type="radio" name="ring" value="0" id="">
+            </div>
+            <div class="row contact">
+              <label for="">Contact téléphone: </label>
+              <input type="number" name="tel" id="">
+            </div>
+            <div class="row">
+              <button type="submit" class="submit-btn">Créer</button>
+              <button class="close-btn">Fermer</button>
+            </div>
+          </form>
+        </div>
+        <div class="alarms-list">
+          <h3>Les alarms</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings tab -->
+    <div class="tab settings">
+      <div class="container">
+        <h1>Parametres</h1>
+      </div>
+    </div>
+    <!-- Audio element for the alert sound -->
+    <audio id="alertSound" loop src="./assets/sound/siren-alert-96052.mp3"></audio>
     <script type="module" src="renderer.js"></script>
   </body>
 </html>

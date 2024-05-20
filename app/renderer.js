@@ -88,7 +88,6 @@ function fetchHumidityData(interval){
 }
 
 // Update temperature/humidity graph
-
 function updateTemperatureGraph(data){
   const timestamps = data.map(entry => entry.time);
   const temperatures = data.map(entry => entry.temperature);
@@ -210,7 +209,8 @@ ipcRenderer.on('fetched-sensor-data', (event, data) => {
 const dateSelectEles = Array.from(document.querySelectorAll('.date-select'));
 const customDateDialogs = Array.from(document.querySelectorAll('.custom-date-dialog'));
 const closeDialogBtns = Array.from(document.querySelectorAll('.close-dialog'));
-const submitBtns = Array.from(document.querySelectorAll('.submit-btn'));
+const dashSubmitBtns = Array.from(document.querySelectorAll('.tab.dash .submit-btn'));
+
 
 
 for (let ele of dateSelectEles){
@@ -246,7 +246,7 @@ for (let ele of closeDialogBtns){
 }
 
 // Submit date picker form
-for (let ele of submitBtns){
+for (let ele of dashSubmitBtns){
   ele.addEventListener('click', (event) => {
     event.preventDefault();
 
@@ -281,6 +281,180 @@ setTimeout(() => {
   fetchHumidityData('24 hours');
 }, 1500)
 
+// Handle tabs 
 
+const tabLinks = document.querySelectorAll('.tab-link');
+const tabs = document.querySelectorAll('.tab')
+
+tabLinks.forEach(link => {
+  link.addEventListener('click', () =>{
+    tabLinks.forEach(ele => {
+      ele.classList.remove('active');
+    })
+
+    link.classList.add('active')
+    const tabName = link.getAttribute('data-tab');
+    // Dispaly tab
+    tabs.forEach(tab => {
+      tab.classList.remove('show')
+      if(tab.classList.contains(tabName))
+        tab.classList.add('show')
+    })
+
+  })
+})
+
+// Alarm form
+const alarmForm = document.querySelector('.alarm-form-container form');
+const submitAlarmBtn = document.querySelector('.alarm-form-container form .submit-btn');
+const closeFormBtn = document.querySelector('.alarm-form-container form .close-btn');
+const createAlamrBtn = document.querySelector('.tab.alarms .create-alarm-btn');
+const formError = document.querySelector('.tab.alarms form p.form-error');
+
+createAlamrBtn.addEventListener('click', event => {
+  event.target.style.display = 'none';
+  alarmForm.style.display = 'block'
+})
+closeFormBtn.addEventListener('click', event => {
+ createAlamrBtn.style.display = 'initial';
+  alarmForm.style.display = 'none'
+})
+
+// Validate form data
+function validForm(data){
+  // Valid name input
+  if(!data.name) return false
+
+  // Valid valueType input
+  if(!data.valueType) return false
+
+  // Valid min value and max value
+  if(!data['min-value'] && !data['max-value']) return false
+
+  // Valid ring
+  if(data.ring == null) return false
+
+  // Valid tel
+  if(!data.tel || (''+data.tel).length != 10) return false
+
+  return true
+}
+
+// Submit alarm form
+
+submitAlarmBtn.addEventListener('click', event =>{
+  event.preventDefault();
+  const formData = new FormData(alarmForm);
+
+  // Convert FormData to an object for easier manipulation
+  const formKeys = ['name', 'tel', 'min-value', 'max-value', 'valueType', 'ring', 'measureType']
+  const formObject = {};
+  formKeys.forEach((key) => {
+
+    if(formData.get(key))
+      formObject[key] = formData.get(key);
+    else formObject[key] = null;
+  });
+
+  // Validate form
+  if(!validForm(formObject)){
+    formError.style.display = 'initial';
+    return false;
+  }
+
+  formError.style.display = 'none';
+
+  // Submit data
+  console.log(formObject)
+
+  ipcRenderer.send('create-alert', formObject);
+  
+  // Show success message
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+  Toast.fire({
+    icon: "success",
+    title: "Alerte ajouté avec succès"
+  });
+  closeFormBtn.click();
+})
+
+// Handle when disable min/max input 
+const thresholdValueTypeInpts = document.querySelectorAll('.alarm-form-container form input[name="valueType"]');
+
+thresholdValueTypeInpts.forEach(ele => {
+  ele.addEventListener('change', e => {
+    const minInput = document.querySelector('.alarm-form-container form input[name="min-value"]');
+    const maxInput = document.querySelector('.alarm-form-container form input[name="max-value"]');
+    
+    minInput.parentElement.style.display = 'none';
+    maxInput.parentElement.style.display = 'none';
+
+    if(e.target.value == 'min')
+      minInput.parentElement.style.display = 'initial';
+    else 
+      maxInput.parentElement.style.display = 'initial'
+
+  })
+})
+
+// Listen to alerts
+
+ipcRenderer.on('alert', (event, data) => {
+  
+  let text = document.createElement('p');
+  let iconUrl;
+  console.log(data)
+  // It's just temperature alarms
+  if(data['temperature'].length > 0 && data['humidity'].length == 0){
+    data['temperature'].forEach(alarm => {
+      text.innerHTML += '-' + alarm.message + '<br>' 
+    })
+    iconUrl = './assets/icons/high-temperature.png';
+  }
+
+    // It's just temperature alarms
+  if(data['temperature'].length == 0 && data['humidity'].length > 0){
+    data['temperature'].forEach(alarm => {
+      text.innerHTML += '-' + alarm.message + '<br>' 
+    })
+    iconUrl = './assets/icons/humidity.png';
+  }
+
+    // It's both temprature and humidity alert
+  if(data['temperature'].length > 0 && data['humidity'].length > 0){
+    data['temperature'].forEach(alarm => {
+      text.innerHTML += '-' + alarm.message + '<br>' 
+    })
+    iconUrl = './assets/icons/danger.png';
+  }
+
+  // Play alert sound
+  var alertSound = document.getElementById('alertSound');
+  alertSound.play();
+
+  Swal.fire({
+    title: "<span style='color: red;'>Alerte!</span>",
+    html: text,
+    imageUrl: iconUrl,
+    imageWidth: 128,
+    imageHeight: 128,
+    imageAlt: "Custom image",
+    confirmButtonText: 'Fermer'
+    }).then(() => {
+      // Stop the audio when the SweetAlert is closed
+      alertSound.pause();
+      alertSound.currentTime = 0; // Reset the audio to the beginning
+    })
+})
 
 

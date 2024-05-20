@@ -3,10 +3,13 @@ body {
   padding: 10px 12px;
   background-color:rgb(245, 245, 245);
 }
-body  > .container{
+button{
+  cursor: pointer;
+}
+.tab > .container{
     height: 80vh;
 }
-body  > .container.measure{
+.tab.dash > .container{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -39,34 +42,40 @@ body  > .container.measure{
 .tab-link:hover {
   color: #ff6f61;
 }
-.container.measure .row{
+.tab{
+  display: none;
+}
+.tab.show{
+  display: block;
+}
+.tab.dash .container .row{
     height: 48%;
 }
-.container.measure .col{
+.tab.dash .container .col{
   border-radius: 20px;
   background-color: white;
 }
-.container.measure.measure .row{
+.tab.dash .container .row{
     display: flex;
     justify-content: space-between;
 }
-.container.measure .row .col.left {
+.tab.dash .container .row .col.left {
     width: 30%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-.container.measure .row .col.left .col-title {
+.tab.dash .container .row .col.left .col-title {
   margin: 0;
   transform: translateY(-11px);
   font-size: 18px;
 }
-.container.measure .row .col.right {
+.tab.dash .container .row .col.right {
     width: 68%;
     position: relative;
 }
-.container.measure .row .col.right .date-select{
+.tab.dash .container .row .col.right .date-select{
     position: absolute;
     top: 7px;
     right: 12px;
@@ -99,7 +108,7 @@ body  > .container.measure{
   color: #ff6f61;
   border: 1px solid #ff6f61;
 }
-.container.measure .row .col .container{
+.tab.dash .container .row .col .container{
   position: relative;
 }
 .circular-progress {
@@ -151,4 +160,51 @@ body  > .container.measure{
     transition: stroke-dasharray 0.7s linear 0s,
                 stroke .6s;
     stroke: url(#blue);
+  }
+
+  /* Alarms tab */
+  .tab.alarms button.create-alarm-btn{
+    background-color: none;
+    border: none;
+    padding: 15px 24px;
+    background-color: #ff6f61;
+    color: white;
+  }
+  .tab.alarms button.create-alarm-btn + p{
+    margin-bottom: 1.5rem;
+  }
+  .tab.alarms .alarm-form-container form{
+    display: none;
+  }
+  .tab.alarms .alarm-form-container form .row{
+    margin-bottom: 1rem;
+  }
+  .tab.alarms .alarm-form-container form .form-error{
+    display: none;
+    color: red;
+    margin-bottom: 30px;
+  }
+  .tab.alarms .alarm-form-container form .row input[type="text"],[type="number"]{
+    background-color: white;
+    padding: 10px 5px;
+    border: 1px solid #ff6f61;
+    outline: none;
+  }
+  .tab.alarms .alarm-form-container form button.submit-btn, .close-btn{
+    padding: 8px 24px;
+    border: none;
+  }
+  .tab.alarms .alarm-form-container form button.submit-btn{
+    background-color: rgb(0, 162, 255);
+    padding: 15px 24px;
+    border: none;
+    color: white;
+  }
+  .tab.alarms .alarm-form-container form button.submit-btn, .close-btn{
+    background-color: none;
+    padding: 15px 24px;
+    border: 1px solid rgb(0, 162, 255);
+  }
+  .tab.alarms .alarms-list{
+    margin-top: 2.5rem;
   }

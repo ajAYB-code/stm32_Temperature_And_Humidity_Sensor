@@ -21,6 +21,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "mysql": "^2.18.1",
     "serialport": "^12.0.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "sweetalert2": "^11.11.0"
   }
 }

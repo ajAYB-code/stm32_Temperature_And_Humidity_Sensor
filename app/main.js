@@ -4,6 +4,20 @@ const SerialPort = require('serialport').SerialPort;
 const sqlite3 = require('sqlite3').verbose();
 
 let mainWindow;
+let alarmsList;
+let db;
+
+// Load alarms
+function loadAlarms(){
+  db.all('select * from alarms', [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      return;
+    }
+
+    alarmsList = rows;
+  });
+}
 
 const createMainWindow = () => {
      mainWindow = new BrowserWindow({
@@ -23,7 +37,6 @@ const createMainWindow = () => {
     })
   }
 
-
 app.whenReady().then(() => {
     createMainWindow()
 
@@ -34,13 +47,16 @@ app.whenReady().then(() => {
     });
 
     // Init database
-    const db = new sqlite3.Database('../sensor_database.db', function(err){
+    db = new sqlite3.Database('../sensor_database.db', function(err){
       if(err){
         console.log('error opening database');
         process.exit(1);
       }
       
     });
+
+    // Load alarms list
+    loadAlarms();
 
     mainWindow.webContents.on("did-finish-load", () => {
 
@@ -54,8 +70,51 @@ app.whenReady().then(() => {
           [temp, humd] = receivedData.split('-');
           temp = parseFloat(temp).toFixed(1);
           humd = parseInt(humd);
+              let temp = 40.5;
+              let humd = 50;
+
           const isValidTempratureValue = temp >= -40 && temp <= 125;
           const isValidHumidityValue = humd >= 0 && humd <= 100;
+
+          // Check alarm
+          const temperatureAlarms = [];
+          const humidityAlarms = [];
+          
+          alarmsList.forEach(alarm => {
+            let humidityAlarm = {message: []};
+            let temperatureAlarm = {message: []};
+
+            if(alarm['measure'] == 'temperature'){
+              if(alarm['min_value'] && temp < alarm['min_value']){
+                temperatureAlarm.message.push(`Température est en dessous de ${alarm['min_value']}°`)
+              }
+              if(alarm['max_value'] && temp > alarm['max_value']){
+                temperatureAlarm.message.push(`Température est au dessus de ${alarm['max_value']}°`)
+              } 
+            }
+          
+            if(alarm['measure'] == 'humidity'){
+              if(alarm['min_value'] && humd < alarm['min_value']){
+                humidityAlarm.message.push(`Humidité est en dessous de ${alarm['min_value']}%`)
+              }
+              if(alarm['max_value'] && humd > alarm['max_value']){
+                humidityAlarm.message.push(`Humidité est au dessus de ${alarm['max_value']}%`)
+              }
+            }
+          
+            if(temperatureAlarm.message.length > 0){
+              temperatureAlarms.push(temperatureAlarm)
+            }
+                          
+          if(humidityAlarm.message.length > 0){
+              humidityAlarms.push(humidityAlarm)
+            }
+          });
+          
+          if(temperatureAlarms.length > 0 || humidityAlarms.length > 0){
+            mainWindow.webContents.send('alert', {temperature: temperatureAlarms, humidity: humidityAlarms})
+          }
+
           if(!isNaN(temp) && !isNaN(humd) && isValidHumidityValue && isValidTempratureValue){
             db.serialize(() => {
               db.run('INSERT INTO sensor_data  VALUES (?, ?, ?)', [new Date().toISOString().replace('T', ' ').slice(0, 19), temp, humd], function(err){
@@ -148,6 +207,20 @@ app.whenReady().then(() => {
         
       })
 
+      // Create new alert
+      ipcMain.on('create-alert', (event, data) => {
+        // Parse numeric values
+        let min = !isNaN(parseFloat(data['min-value']).toFixed(1)) ?  parseFloat(data['min-value']).toFixed(1) : null;
+        let max = !isNaN(parseFloat(data['max-value']).toFixed(1)) ?  parseFloat(data['max-value']).toFixed(1) : null;
+        let ring = parseFloat(data['ring'])
+        db.run('INSERT INTO alarms  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [null, data['name'], data['measureType'], min, max, 1, new Date().toISOString().replace('T', ' ').slice(0, 19), data['tel'], ring], function(err){
+            if(err){
+              return console.log(err.message)
+            }
+
+            // Load alarms again
+            loadAlarms();
+      })
     })
 
     // Close Database and Serial connection
@@ -157,4 +230,4 @@ app.whenReady().then(() => {
     });
     
   })
- 
+})
