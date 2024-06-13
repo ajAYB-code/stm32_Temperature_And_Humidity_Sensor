@@ -12,6 +12,7 @@ extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart2;
 extern I2C_HandleTypeDef hi2c1;
 extern SPI_HandleTypeDef hspi1;
+extern UART_HandleTypeDef 	Uart1Handle;
 
 //===========================================================
 void SysTick_Handler(void)
@@ -72,6 +73,7 @@ void SPI1_IRQHandler(void)
 {
 	HAL_SPI_IRQHandler(&hspi1);
 }
+
 //===========================================================
 
 

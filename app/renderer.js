@@ -332,14 +332,15 @@ function validForm(data){
   if(!data['min-value'] && !data['max-value']) return false
 
   // Valid ring
-  if(data.ring == null) return false
+  // if(data.ring == null) return false
 
   // Valid tel
-  if(!data.tel || (''+data.tel).length != 10) return false
+  // if(!data.tel || (''+data.tel).length != 10) return false
 
   return true
 }
 
+let resetFormBtn = document.getElementById('resetForm');
 // Submit alarm form
 
 submitAlarmBtn.addEventListener('click', event =>{
@@ -347,7 +348,7 @@ submitAlarmBtn.addEventListener('click', event =>{
   const formData = new FormData(alarmForm);
 
   // Convert FormData to an object for easier manipulation
-  const formKeys = ['name', 'tel', 'min-value', 'max-value', 'valueType', 'ring', 'measureType']
+  const formKeys = ['name', 'min-value', 'max-value', 'valueType', 'measureType']
   const formObject = {};
   formKeys.forEach((key) => {
 
@@ -364,11 +365,14 @@ submitAlarmBtn.addEventListener('click', event =>{
 
   formError.style.display = 'none';
 
+
   // Submit data
   console.log(formObject)
 
   ipcRenderer.send('create-alert', formObject);
   
+  resetFormBtn.click()
+
   // Show success message
   const Toast = Swal.mixin({
     toast: true,
@@ -456,5 +460,88 @@ ipcRenderer.on('alert', (event, data) => {
       alertSound.currentTime = 0; // Reset the audio to the beginning
     })
 })
+
+// Function to generate HTML for an alert card
+
+function createAlertCard(alert) {
+  let card = document.createElement("div");
+  card.className = "card";
+  card.setAttribute("id", alert.id)
+  let title = document.createElement("h3");
+  title.textContent = alert.name;
+  card.appendChild(title);
+
+  let measureType = document.createElement("p");
+  measureType.innerHTML = "Mesure: " + "<span class='second-text'>" + alert.measure + '</span>';
+  card.appendChild(measureType);
+
+  let symbol = alert.measure == 'temperature' ? '°' : '%'
+
+  if(alert.min_value){
+    let minValue = document.createElement("p");
+    minValue.innerHTML = alert.min_value ?  "Min: " + "<span class='second-text'>" + alert.min_value + symbol + '</span>' : "";
+    card.appendChild(minValue);
+  }
+
+  if(alert.max_value){
+    let maxValue = document.createElement("p");
+    maxValue.innerHTML =  alert.max_value ?  "Max: " +  "<span class='second-text'>" + alert.max_value + symbol + '</span>' : "-";
+    card.appendChild(maxValue);
+  }
+
+  let date = document.createElement("p");
+  date.innerHTML = "Date: " + "<span class='second-text'>" + alert.created_at+'</span>';
+  card.appendChild(date);
+
+  let deleteBtn = document.createElement("button");
+  deleteBtn.setAttribute("id", "deleteAlert")
+  deleteBtn.setAttribute("id-alert", alert.id)
+  deleteBtn.textContent = "Supprimer";
+
+  //Delete button logic
+  deleteBtn.addEventListener("click", function(e) {
+    let idAlert = e.target.getAttribute("id-alert");
+    ipcRenderer.send('delete-alert', {id: idAlert});
+  
+    // Show success message
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 5000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: "Alerte supprimeé avec succès"
+    });
+    
+  });
+
+  card.appendChild(deleteBtn);
+
+  return card;
+}
+
+// Listen to fetch alerts list
+ipcRenderer.on('fetched-alerts', (event, data) => {
+  renderAlerts(data);
+})
+
+// Function to render alert cards
+function renderAlerts(alerts) {
+  let alertList = document.querySelector(".alarms-list .list");
+  alertList.innerHTML = ""; // Clear previous content
+
+  alerts.forEach(alert => {
+      let card = createAlertCard(alert);
+      alertList.appendChild(card);
+  });
+}
+
 
 

@@ -79,6 +79,9 @@ button{
     position: absolute;
     top: 7px;
     right: 12px;
+    border: none;
+    border-bottom:1px solid black ;
+    padding:initial 0 ;
 }
 .custom-date-dialog {
   display: none;
@@ -208,3 +211,37 @@ button{
   .tab.alarms .alarms-list{
     margin-top: 2.5rem;
   }
+  .tab.alarms .alarms-list .list{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .card {
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: 300px;
+}
+.card button {
+    margin-top: 5px;
+    padding: 8px 20px;
+    border: none;
+    outline: none;
+    background-color: none;
+    margin-right: 5px;
+}
+.card button#editAlert {
+    background-color: green;
+    color: white;
+}
+.card button#deleteAlert {
+    background-color: red;
+    color: white;
+}
+.card .second-text{
+  color: rgb(97, 97, 97);
+}
+.card .first-text{
+  font-weight: bold;
+}

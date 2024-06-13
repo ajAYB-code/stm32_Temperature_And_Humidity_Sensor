@@ -8,6 +8,7 @@
 #include "lm75.h"
 #include "stm32f4xx_hal.h"
 #include "math.h"
+#define buff_size 50
 
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim5;
@@ -43,6 +44,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 //============================================================
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart == &huart2)
@@ -60,6 +62,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 	}
 }
+
+//Fonction pour lecture de la valeur de la température et l'humidité
 
 void read_tempAndHumd(float *temp, float *humd){
 	uint8_t buffer[10];
@@ -86,7 +90,6 @@ int main()
 	green_led(0);
 	red_led(0);
 	blue_led(0);
-
 
 	//Init UART
 	huart2.Instance          = USART2;
@@ -119,15 +122,8 @@ int main()
 
 		uart_printf(&huart2, "%f-%f\r\n", temp, humd);
 
-
 		HAL_Delay(10000);
 
-		/*lm75_read_temp(&temp);
-		HAL_Delay(1000);
-		tempCylis = ((float)temp / 8.0);
-
-		if(tempCylis > 23.7) red_led(1);
-		else red_led(0);*/
 	}
 
 	return 0;

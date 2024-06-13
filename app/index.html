@@ -15,7 +15,6 @@
     <div class="tab-header">
       <a href="#" data-tab="dash" class="tab-link active"><i class="fas fa-thermometer-half"></i> Dash</a>
       <a href="#" data-tab="alarms" class="tab-link"><i class="fas fa-bell"></i> Alertes</a>
-      <a href="#" data-tab="settings" class="tab-link"><i class="fas fa-cog"></i> Parametres</a>
   </div>
 
     <!-- Measure tab -->
@@ -174,7 +173,7 @@
             <div class="row interval">
               <label for="" style="margin-right: 10px;">Valeur: </label>
               <label for="">min</label>
-              <input type="radio" name="valueType" value="min" id="">
+              <input type="radio" checked name="valueType" value="min" id="">
               <label for="">max</label>
               <input type="radio" name="valueType" value="max" id="">
             </div>
@@ -183,40 +182,36 @@
                 <label for="">Min: </label>
                 <input type="number" name="min-value" id="">
               </div>
-              <div class="row">
+              <div class="row" style="display: none;">
                 <label for="">Max: </label>
                 <input type="number" name="max-value" id="">
               </div>
             </div>
-            <div class="row ring">
+            <!-- <div class="row ring">
               <label for="" style="margin-right: 10px;">Avec sonnerie: </label>
               <label for="">Oui</label>
               <input type="radio" name="ring" value="1" id="">
               <label for="">Non</label>
               <input type="radio" name="ring" value="0" id="">
-            </div>
-            <div class="row contact">
+            </div> -->
+            <!-- <div class="row contact">
               <label for="">Contact téléphone: </label>
               <input type="number" name="tel" id="">
-            </div>
+            </div> -->
             <div class="row">
+              <button type="reset" id="resetForm" style="display: none;"></button>
+              <button type="button" class="close-btn">Fermer</button>
               <button type="submit" class="submit-btn">Créer</button>
-              <button class="close-btn">Fermer</button>
             </div>
           </form>
         </div>
         <div class="alarms-list">
-          <h3>Les alarms</h3>
+          <h2>Les alertes</h2>
+          <div class="list"></div>
         </div>
       </div>
     </div>
 
-    <!-- Settings tab -->
-    <div class="tab settings">
-      <div class="container">
-        <h1>Parametres</h1>
-      </div>
-    </div>
     <!-- Audio element for the alert sound -->
     <audio id="alertSound" loop src="./assets/sound/siren-alert-96052.mp3"></audio>
     <script type="module" src="renderer.js"></script>

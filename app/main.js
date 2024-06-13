@@ -9,13 +9,15 @@ let db;
 
 // Load alarms
 function loadAlarms(){
+  console.log("hello")
   db.all('select * from alarms', [], (err, rows) => {
     if (err) {
       console.error(err.message);
       return;
     }
-
     alarmsList = rows;
+    // Send alerts
+    mainWindow.webContents.send('fetched-alerts', alarmsList);
   });
 }
 
@@ -40,9 +42,9 @@ const createMainWindow = () => {
 app.whenReady().then(() => {
     createMainWindow()
 
-    // Init serial port
+    //Init serial port
     const port = new SerialPort({
-      path : 'COM3', 
+      path : 'COM4', 
       baudRate: 115200
     });
 
@@ -55,27 +57,30 @@ app.whenReady().then(() => {
       
     });
 
-    // Load alarms list
-    loadAlarms();
+
+    
 
     mainWindow.webContents.on("did-finish-load", () => {
 
+      // Load alarms list
+      loadAlarms();
       // read sensor data
       let receivedData = ''; 
       let temp, humd;
 
       port.on('data', function(data) {
+        
         receivedData += data.toString(); 
         if (receivedData.includes('\n')) {
+
           [temp, humd] = receivedData.split('-');
+
           temp = parseFloat(temp).toFixed(1);
           humd = parseInt(humd);
-              let temp = 40.5;
-              let humd = 50;
 
           const isValidTempratureValue = temp >= -40 && temp <= 125;
           const isValidHumidityValue = humd >= 0 && humd <= 100;
-
+          console.log(alarmsList)
           // Check alarm
           const temperatureAlarms = [];
           const humidityAlarms = [];
@@ -213,13 +218,29 @@ app.whenReady().then(() => {
         let min = !isNaN(parseFloat(data['min-value']).toFixed(1)) ?  parseFloat(data['min-value']).toFixed(1) : null;
         let max = !isNaN(parseFloat(data['max-value']).toFixed(1)) ?  parseFloat(data['max-value']).toFixed(1) : null;
         let ring = parseFloat(data['ring'])
-        db.run('INSERT INTO alarms  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [null, data['name'], data['measureType'], min, max, 1, new Date().toISOString().replace('T', ' ').slice(0, 19), data['tel'], ring], function(err){
+        db.run('INSERT INTO alarms  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [null, data['name'], data['measureType'], min, max, 1, new Date().toISOString().replace('T', ' ').slice(0, 19), null, null], function(err){
             if(err){
               return console.log(err.message)
             }
 
             // Load alarms again
             loadAlarms();
+            
+      })
+    })
+
+    // Delete alert
+
+    ipcMain.on('delete-alert', (event, data) => {
+      let id = data.id;
+      db.run('delete from alarms where id=?', [id], function(err){
+        if(err){
+          return console.log(err.message)
+        }
+
+        //Load alarms
+        loadAlarms();
+        
       })
     })
 

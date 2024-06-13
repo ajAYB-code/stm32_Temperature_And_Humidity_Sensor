@@ -14,6 +14,7 @@
 #define EXTI4_IRQ_PRIO      6
 #define USART2_IRQ_PRIO     7
 #define SPI1_IRQ_PRIO		4
+#define USART1_IRQ_PRIO	8
 
 void HAL_GPIO_LEDS_MspInit(void);
 void HAL_TIM2_MspInit(void);
@@ -198,6 +199,34 @@ void HAL_GPIO_SWITCH_LEFT_EXTI_MspInit()
 
       NVIC_SetPriority(EXTI1_IRQn , EXTI1_IRQ_PRIORITY);
       NVIC_EnableIRQ(EXTI1_IRQn);
+}
+
+void HAL_UART1_MspInit(void)
+{
+  GPIO_InitTypeDef  GPIO_InitStruct;
+
+  __GPIOA_CLK_ENABLE();
+
+  __USART1_CLK_ENABLE();
+
+  GPIO_InitStruct.Pin       = GPIO_PIN_9;
+  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull      = GPIO_PULLUP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_LOW;	//GPIO_SPEED_FAST;
+  GPIO_InitStruct.Alternate =  GPIO_AF7_USART1;
+
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin       = GPIO_PIN_3;
+  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull      = GPIO_PULLUP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_LOW;	//GPIO_SPEED_FAST;
+  GPIO_InitStruct.Alternate =  GPIO_AF7_USART1;
+
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  HAL_NVIC_SetPriority(USART1_IRQn, USART1_IRQ_PRIO, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
 }
 //===========================================================
 
