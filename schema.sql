@@ -6,6 +6,5 @@ min_value DECIMAL(10,1),
 max_value DECIMAL(10,1),
 enabled INTEGER,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-tel VARCHAR(10),
-ring_enabled INTEGER);
+);
 CREATE TABLE sqlite_sequence(name,seq);

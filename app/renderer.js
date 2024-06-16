@@ -1,4 +1,3 @@
-
 let tempProgressEle = document.querySelector(".circular-progress.temperature");
 let tempTextEle = document.querySelector(".circular-progress.temperature + .percent-text span.number");
 let humdProgressEle = document.querySelector(".circular-progress.humidity");
@@ -467,9 +466,45 @@ function createAlertCard(alert) {
   let card = document.createElement("div");
   card.className = "card";
   card.setAttribute("id", alert.id)
+  let header = document.createElement('div');
+  header.setAttribute('style', 'display:flex;justify-content:space-between;align-items: center');
   let title = document.createElement("h3");
+  header.appendChild(title);
+  let toggleDiv = document.createElement('div');
+  let label = document.createElement('label');
+  label.setAttribute('class', 'switch')
+  let check = document.createElement('input')
+  check.setAttribute('type', 'checkbox')
+  if(alert.enabled){
+    check.setAttribute('checked', '')
+  }
+
+  //Enable / Disable alert
+  check.addEventListener('change', e => {
+    let toggleVal = 0;
+
+    if(e.target.checked){
+      toggleVal = 1;
+    } 
+
+    ipcRenderer.send('toggle-alert', {toggle:  toggleVal, id: alert.id})
+  })
+
+  let span = document.createElement('span');
+  span.setAttribute('class', 'slider round');
+  label.appendChild(check)
+  label.appendChild(span)
+  toggleDiv.appendChild(label)
+  // toggleDiv.innerHTML =  `
+  //   <label class="switch">
+  // <input type="checkbox" checked onchange='foo(this)'>
+  // <span class="slider round"></span>
+  // </label>`
+
   title.textContent = alert.name;
-  card.appendChild(title);
+  header.appendChild(title);
+  header.appendChild(toggleDiv);
+  card.appendChild(header);
 
   let measureType = document.createElement("p");
   measureType.innerHTML = "Mesure: " + "<span class='second-text'>" + alert.measure + '</span>';
@@ -542,6 +577,3 @@ function renderAlerts(alerts) {
       alertList.appendChild(card);
   });
 }
-
-
-

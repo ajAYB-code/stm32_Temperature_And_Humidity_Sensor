@@ -18,29 +18,11 @@ float tempCylis;
 int button_pressed = 0;
 
 //===========================================================
-float degToFaraday(float tempDeg){
-	return (tempDeg * ((float) (9/5.0)) + 32);
-}
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	switch(GPIO_Pin)
 	{
-		case GPIO_PIN_1:
-
-			if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1) > 0){
-				button_pressed = 1;
-				uart_printf(&huart2, "Temperature(C°): %f\r\n", tempCylis);
-				HAL_TIM_Base_Start_IT(&htim5);
-			} else {
-				button_pressed = 0;
-			}
-
-		break;
-		/*case GPIO_PIN_0:
-			green_led(1);
-			uart_printf(&huart2, "Temperature(C°): %f\r\n", tempCylis);
-			break;*/
 	}
 }
 //============================================================
@@ -57,8 +39,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	if(htim == &htim5){
 		if(button_pressed == 1){
-			uart_printf(&huart2, "Temperature(F°): %f\r\n", degToFaraday(tempCylis));
-			HAL_TIM_Base_Stop_IT(&htim5);
 		}
 	}
 }
@@ -104,14 +84,6 @@ int main()
 	hi2c1.Init.ClockSpeed = 400000;
 	HAL_I2C_Init(&hi2c1);
 
-	//Init TIM5
-	uint32_t prescalerValue;
-	prescalerValue = (uint32_t) SystemCoreClock;
-	htim5.Instance = TIM5;
-	htim5.Init.Period = 16790;
-	htim5.Init.Prescaler = 9999;
-	HAL_TIM_Base_Init(&htim5);
-
 	float temp;
 	float humd;
 
@@ -120,6 +92,7 @@ int main()
 	{
 		read_tempAndHumd(&temp, &humd);
 
+		//Envoyer les donné en liaison serial
 		uart_printf(&huart2, "%f-%f\r\n", temp, humd);
 
 		HAL_Delay(10000);

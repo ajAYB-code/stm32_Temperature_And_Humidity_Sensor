@@ -21,6 +21,20 @@ function loadAlarms(){
   });
 }
 
+// Automatically detect com used by stm32
+async function detectSTM32Port() {
+  const ports = await SerialPort.list();
+  let stm32Port;
+  for (let port of ports) {
+      if (port.manufacturer && port.manufacturer.includes('STM')) {
+          stm32Port = port.path;
+          break;
+      }
+  }
+
+  return stm32Port;
+}
+
 const createMainWindow = () => {
      mainWindow = new BrowserWindow({
       width: 800,
@@ -39,12 +53,14 @@ const createMainWindow = () => {
     })
   }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
     createMainWindow()
 
     //Init serial port
+    let stmPort = await detectSTM32Port();
+
     const port = new SerialPort({
-      path : 'COM4', 
+      path : stmPort, 
       baudRate: 115200
     });
 
@@ -80,12 +96,13 @@ app.whenReady().then(() => {
 
           const isValidTempratureValue = temp >= -40 && temp <= 125;
           const isValidHumidityValue = humd >= 0 && humd <= 100;
-          console.log(alarmsList)
+
           // Check alarm
           const temperatureAlarms = [];
           const humidityAlarms = [];
           
           alarmsList.forEach(alarm => {
+            if(!alarm.enabled) return;
             let humidityAlarm = {message: []};
             let temperatureAlarm = {message: []};
 
@@ -218,7 +235,7 @@ app.whenReady().then(() => {
         let min = !isNaN(parseFloat(data['min-value']).toFixed(1)) ?  parseFloat(data['min-value']).toFixed(1) : null;
         let max = !isNaN(parseFloat(data['max-value']).toFixed(1)) ?  parseFloat(data['max-value']).toFixed(1) : null;
         let ring = parseFloat(data['ring'])
-        db.run('INSERT INTO alarms  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [null, data['name'], data['measureType'], min, max, 1, new Date().toISOString().replace('T', ' ').slice(0, 19), null, null], function(err){
+        db.run('INSERT INTO alarms  VALUES (?, ?, ?, ?, ?, ?, ?)', [null, data['name'], data['measureType'], min, max, 1, new Date().toISOString().replace('T', ' ').slice(0, 19)], function(err){
             if(err){
               return console.log(err.message)
             }
@@ -234,6 +251,21 @@ app.whenReady().then(() => {
     ipcMain.on('delete-alert', (event, data) => {
       let id = data.id;
       db.run('delete from alarms where id=?', [id], function(err){
+        if(err){
+          return console.log(err.message)
+        }
+
+        //Load alarms
+        loadAlarms();
+        
+      })
+    })
+
+    //Toggle alert enbale/disable
+    ipcMain.on('toggle-alert', (event, data) => {
+      let id = data.id;
+      let toggle = data.toggle;
+      db.run('update alarms set enabled = ? where id=?', [toggle,id], function(err){
         if(err){
           return console.log(err.message)
         }
