@@ -1,6 +1,6 @@
 ## Overview
 
-This capstone project showcases a desktop application designed to visualize environmental data, specifically temperature and humidity. The data is collected using the SHT35 sensor, stored in an SQLite database, and elegantly displayed using ElectronJS.
+This project showcases a desktop application designed to visualize environmental data, specifically temperature and humidity. The data is collected using the SHT35 sensor, stored in an SQLite database, and elegantly displayed using ElectronJS.
 
 ## Features
 
